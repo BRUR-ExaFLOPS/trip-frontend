@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useEffect, useState } from "react"
 import * as z from "zod"
 import {
   Form,
@@ -23,8 +23,8 @@ import {
 } from "../ui/select"
 import TypingAnimation from "../ui/typing-animation"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
-import { TrainIcon, BusIcon, PlaneIcon } from "lucide-react" // Icons for transport
-import { Label } from "@radix-ui/react-label"
+import { TrainIcon, BusIcon, PlaneIcon, StarIcon } from "lucide-react"
+import MapPage from "./map"
 
 // Define validation schema using zod
 const formSchema = z.object({
@@ -38,13 +38,38 @@ const TripFinalForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      tripPlan: "Mid-range", // Default trip plan
-      transport: "Train", // Default transport option
+      tripPlan: "Mid-range",
+      transport: "Train",
+      mealPlan: "",
+      accommodation: "",
     },
   })
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log("Form data:", data)
+  const [recommendationData, setRecommendationData] = useState<any>([])
+
+  async function getData() {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/travel/travel-recommendations?destination=dhaka&duration=3`
+      )
+      const data = await res.json()
+      console.log(data)
+      setRecommendationData(data)
+    } catch (error) {}
+  }
+
+  useEffect(() => {
+    getData()
+  }, [])
+
+  const onSubmit = async (formData: z.infer<typeof formSchema>) => {
+    try {
+      console.log("")
+    } catch (error) {
+      console.log(error)
+    }
+
+    console.log("Form data:", formData)
   }
 
   return (
@@ -151,10 +176,7 @@ const TripFinalForm = () => {
             )}
           />
 
-          <div className="flex flex-col gap-4">
-            <FormLabel className="mt-7">Map</FormLabel>
-            <div className="w-full h-96 rounded-2xl bg-gray-200"></div>
-          </div>
+          <MapPage />
 
           {/* Meal Plan Input */}
           <FormField
@@ -163,9 +185,29 @@ const TripFinalForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Meal Plan</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter your meal plan" {...field} />
-                </FormControl>
+                <div className="flex space-x-4 overflow-x-auto">
+                  {recommendationData?.mealPlans?.map(
+                    (meal: any, index: number) => (
+                      <Card
+                        key={index}
+                        onClick={() => field.onChange(meal.name)} // Updates form field when card is clicked
+                        className={`cursor-pointer min-w-[200px] ${
+                          field.value === meal.name ? "border-blue-500" : ""
+                        }`}
+                      >
+                        <img
+                          src={meal.image}
+                          alt={meal.name}
+                          className="w-full h-32 object-cover rounded-t-xl"
+                        />
+                        <CardContent>
+                          <h4 className="text-lg font-bold">{meal.name}</h4>
+                          <p className="text-sm text-zinc-600">{meal.price}</p>
+                        </CardContent>
+                      </Card>
+                    )
+                  )}
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -178,12 +220,37 @@ const TripFinalForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Accommodation</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter your accommodation preferences"
-                    {...field}
-                  />
-                </FormControl>
+                <div className="flex space-x-4 overflow-x-auto">
+                  {recommendationData?.accommodations?.map(
+                    (item: any, index: number) => (
+                      <Card
+                        key={index}
+                        onClick={() => field.onChange(item.name)} // Updates form field when card is clicked
+                        className={`cursor-pointer min-w-[200px] ${
+                          field.value === item.name ? "border-blue-500" : ""
+                        }`}
+                      >
+                        <img
+                          src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${item.photos[0]}`}
+                          alt={item.name}
+                          className="w-full h-32 object-cover rounded-t-md"
+                        />
+                        <CardContent className="p-2">
+                          <h4 className="text-md font-bold">{item.name}</h4>
+                          <p className="text-sm text-zinc-600">
+                            {item.address}
+                          </p>
+                          <p className="text-sm text-zinc-600">
+                            rating: {item.rating}
+                          </p>
+                          <p className="text-sm text-zinc-600 mt-2">
+                            {item.price}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    )
+                  )}
+                </div>
                 <FormMessage />
               </FormItem>
             )}
