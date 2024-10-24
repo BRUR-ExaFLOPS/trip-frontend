@@ -14,7 +14,6 @@ const center = {
 }
 
 const MapPage = ({ recommendationData }: any) => {
-  console.log("From map page:" + JSON.stringify(recommendationData?.mealPlans))
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string, // Use your Google Maps API key here
