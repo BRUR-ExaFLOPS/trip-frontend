@@ -29,7 +29,10 @@ const MapPage = ({ recommendationData }: any) => {
         <Marker position={center} />
 
         {recommendationData?.mealPlans?.map((item: any, index: number) => (
-          <Marker position={{ lat: item.latitude, lng: item.longitude }} />
+          <Marker
+            position={{ lat: item.latitude, lng: item.longitude }}
+            icon="/restaurant.svg"
+          />
         ))}
       </GoogleMap>
     </div>
