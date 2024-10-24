@@ -49,7 +49,15 @@ export const Home = () => {
         </Card>
       </div>
 
-      <div>
+      <div className="h-[400px] w-full bg-gray-100 rounded-xl p-6 md:p-12">
+        <h1 className="text-4xl text-center">Search your trip images</h1>
+        <p className="mt-2 text-zinc-600 text-center">
+          This is a AI powered image search, please give your prompt to get
+          required image.
+        </p>
+      </div>
+
+      <div className="mt-8">
         <h2 className="text-3xl">Your Trips</h2>
         <div className="py-6 flex flex-col gap-4">
           {trips.map((trip) => (
