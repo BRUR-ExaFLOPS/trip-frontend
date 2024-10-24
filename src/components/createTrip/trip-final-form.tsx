@@ -28,6 +28,7 @@ import MapPage from "./map"
 import { Skeleton } from "../ui/skeleton"
 import AnimatedShinyText from "../ui/animated-shiny-text"
 
+
 // Define validation schema using zod
 const formSchema = z.object({
   tripPlan: z.enum(["Budget", "Mid-range", "Luxury"]),
@@ -36,7 +37,8 @@ const formSchema = z.object({
   accommodation: z.string().min(1, { message: "Accommodation is required" }),
 })
 
-const TripFinalForm = () => {
+const TripFinalForm = ({destination, duration, router} : {destination: string, duration: string}) => {
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -53,7 +55,7 @@ const TripFinalForm = () => {
   async function getData() {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/travel/travel-recommendations?destination=dhaka&duration=3`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/travel/travel-recommendations?destination=${destination}&duration=${duration}`
       )
       const data = await res.json()
       setRecommendationData(data)
@@ -69,6 +71,31 @@ const TripFinalForm = () => {
 
   const onSubmit = async (formData: z.infer<typeof formSchema>) => {
     console.log("Form data:", formData)
+
+    try{
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/travel/store-trip-plan`, {
+        method: "POST",
+        headers: {
+          "Content-Type" : "application/json"
+        },
+        body: JSON.stringify({
+          username: "test",
+          destination: destination,
+          tripPlan: form.getValues("tripPlan"),
+          mealPlan: form.getValues("mealPlan"),
+          accommodation : form.getValues("accommodation"),
+          transportOption: form.getValues("transport")
+        })
+      })
+
+      if(response.ok) {
+        window.location.href = "/dashboard"
+      }else {
+        throw new Error("Error Creating Plan")
+      }
+    }catch(err) {
+      console.log(err)
+    }
   }
 
   return (
@@ -202,23 +229,29 @@ const TripFinalForm = () => {
                           />
                         ))
                     : recommendationData?.mealPlans?.map(
-                        (meal: any, index: number) => (
+                        (item: any, index: number) => (
                           <Card
                             key={index}
-                            onClick={() => field.onChange(meal.name)}
+                            onClick={() => field.onChange(item.placeId)}
                             className={`cursor-pointer min-w-[200px] ${
-                              field.value === meal.name ? "border-blue-500" : ""
+                              field.value === item.placeId ? "border-blue-500" : ""
                             }`}
                           >
                             <img
-                              src={meal.image}
-                              alt={meal.name}
-                              className="w-full h-32 object-cover rounded-t-xl"
+                              src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${item.photos[0]}`}
+                              alt={item.name}
+                              className="w-full h-32 object-cover rounded-t-md"
                             />
-                            <CardContent>
-                              <h4 className="text-lg font-bold">{meal.name}</h4>
+                            <CardContent className="p-2">
+                              <h4 className="text-md font-bold">{item.name}</h4>
                               <p className="text-sm text-zinc-600">
-                                {meal.price}
+                                {item.address}
+                              </p>
+                              <p className="text-sm text-zinc-600">
+                                rating: {item.rating}
+                              </p>
+                              <p className="text-sm text-zinc-600 mt-2">
+                                {item.price}
                               </p>
                             </CardContent>
                           </Card>
@@ -258,9 +291,9 @@ const TripFinalForm = () => {
                         (item: any, index: number) => (
                           <Card
                             key={index}
-                            onClick={() => field.onChange(item.name)}
+                            onClick={() => field.onChange(item.placeId)}
                             className={`cursor-pointer min-w-[200px] ${
-                              field.value === item.name ? "border-blue-500" : ""
+                              field.value === item.placeId ? "border-blue-500" : ""
                             }`}
                           >
                             <img

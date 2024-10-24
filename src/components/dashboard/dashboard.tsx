@@ -1,28 +1,49 @@
-import React from "react"
-import Link from "next/link"
-import { Card, CardHeader, CardTitle, CardContent } from "../ui/card"
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export const Home = () => {
-  const trips = [
-    {
-      id: 1,
-      destination: "Paris",
-      date: "July 2024",
-      overview: "Explore the city of lights and its famous landmarks.",
-    },
-    {
-      id: 2,
-      destination: "New York",
-      date: "October 2024",
-      overview: "Experience the hustle and bustle of the Big Apple.",
-    },
-    {
-      id: 3,
-      destination: "Tokyo",
-      date: "December 2024",
-      overview: "Discover the vibrant culture and technology of Japan.",
-    },
-  ]
+  // State to hold the fetched trips and search results
+  const [trips, setTrips] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+
+  // Fetch trips from the API when the component mounts
+  useEffect(() => {
+    const fetchTrips = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/travel/trip-details?username=test`);
+        const data = await response.json();
+        const formattedTrips = data.map((trip  :any, index : number) => ({
+          id: index + 1,
+          destination: trip.destination,
+          date: "Date not provided", // Replace this with actual date if available
+          overview: `Accommodation: ${trip.accommodation?.name || "N/A"}. Meal Plan: ${trip.mealPlan?.name || "N/A"}`,
+          accommodationPhotos: trip.accommodation?.photos || [],
+          mealPlanPhotos: trip.mealPlan?.photos || [],
+          _id: trip._id
+        }));
+        setTrips(formattedTrips);
+      } catch (error) {
+        console.error("Error fetching trips:", error);
+      }
+    };
+
+    fetchTrips();
+  }, []);
+
+  // Handle image search API
+  const handleSearchImages = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/travel/search-images?query=${searchQuery}`);
+      const data = await response.json();
+      setSearchResults(data); // Update search results state with the fetched data
+    } catch (error) {
+      console.error("Error fetching image search results:", error);
+    }
+  };
 
   return (
     <div>
@@ -49,18 +70,59 @@ export const Home = () => {
         </Card>
       </div>
 
+      {/* Image Search Section */}
       <div className="h-[400px] w-full bg-gray-100 rounded-xl p-6 md:p-12">
         <h1 className="text-4xl text-center">Search your trip images</h1>
         <p className="mt-2 text-zinc-600 text-center">
-          This is a AI powered image search, please give your prompt to get
-          required image.
+          This is an AI-powered image search. Please give your prompt to get the required image.
         </p>
+
+        {/* Search Form */}
+        <div className="flex flex-col items-center mt-6">
+          <Input
+            type="text"
+            placeholder="Search images..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="mb-4 max-w-lg w-full"
+          />
+          <Button variant="default" onClick={handleSearchImages}>
+            Search Images
+          </Button>
+        </div>
       </div>
 
+      {/* Display search results */}
+      {searchResults.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-3xl">Search Results</h2>
+          <div className="py-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {searchResults.map((result: any) => (
+              <Card key={result.id}>
+                <CardHeader>
+                  <CardTitle>{result.originalName}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <img
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/travel/image/${result.filename}`}
+                    alt={result.originalName}
+                    className="rounded-lg"
+                  />
+                  <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    {result.summary}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Trips Section */}
       <div className="mt-8">
         <h2 className="text-3xl">Your Trips</h2>
         <div className="py-6 flex flex-col gap-4">
-          {trips.map((trip) => (
+          {trips.map((trip: any) => (
             <Card key={trip.id}>
               <CardHeader>
                 <CardTitle>{trip.destination}</CardTitle>
@@ -69,11 +131,7 @@ export const Home = () => {
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   {trip.date}
                 </p>
-                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                  {trip.overview}
-                </p>
-
-                <Link href={`/trip/${trip.id}`}>
+                <Link href={`/trip/${trip._id}`}>
                   <p className="mt-4 inline-block text-blue-500 hover:underline">
                     View Details
                   </p>
@@ -84,5 +142,5 @@ export const Home = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
