@@ -1,12 +1,10 @@
 "use client"
 
-import React from "react"
-import TypingAnimation from "../ui/typing-animation"
+import React, { useState } from "react"
 import * as z from "zod"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -14,15 +12,30 @@ import {
 } from "../ui/form"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Label } from "../ui/label"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
-import { SearchIcon } from "lucide-react"
+import { CalendarIcon, SearchIcon } from "lucide-react"
 import { redirect } from "next/navigation"
+import { cn } from "@/lib/utils"
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@radix-ui/react-popover"
+import { differenceInDays, format } from "date-fns"
+import { Calendar } from "../ui/calendar" // Assuming Calendar component is imported here
 
+// Define the Zod schema
 const formSchema = z.object({
-  destination: z.string(),
-  duration: z.number(),
+  destination: z.string().nonempty({ message: "Destination is required" }),
+  dateRange: z
+    .object({
+      from: z.date().nullable(),
+      to: z.date().nullable(),
+    })
+    .refine((data) => data.from && data.to, {
+      message: "Please select a date range",
+    }),
 })
 
 const TripForm = () => {
@@ -30,13 +43,36 @@ const TripForm = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       destination: "",
-      duration: 3
+      dateRange: {
+        from: null,
+        to: null,
+      },
     },
   })
 
-  const onSubmit = () => {
-    console.log("Hello")
-    redirect(`/createTrip?destination=${form.getValues("destination")}&duration=${form.getValues("duration")}`)
+  const [selectedDate, setSelectedDate] = useState<{
+    from: Date | null
+    to: Date | null
+  }>({ from: null, to: null })
+
+  // Sync selectedDate with form's dateRange field
+  const handleDateSelect = (range: { from: Date | null; to: Date | null }) => {
+    setSelectedDate(range)
+    form.setValue("dateRange", range) // Update the form value for dateRange
+  }
+
+  const calculateDuration = () => {
+    if (selectedDate.from && selectedDate.to) {
+      return differenceInDays(selectedDate.to, selectedDate.from) + 1 // Includes both start and end dates
+    }
+    return 0
+  }
+
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    const duration = calculateDuration()
+
+    // Redirect with destination and duration as query params
+    redirect(`/createTrip?destination=${data.destination}&duration=${duration}`)
   }
 
   return (
@@ -44,17 +80,18 @@ const TripForm = () => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="max-w-3xl mx-auto flex gap-4"
+          className="max-w-3xl mx-auto flex md:flex-row flex-col gap-4"
         >
+          {/* Destination Input */}
           <FormField
             control={form.control}
             name="destination"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel className="">Destination</FormLabel>
+                <FormLabel>Destination</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="to where?"
+                    placeholder="To where?"
                     {...field}
                     className="w-full"
                   />
@@ -64,8 +101,54 @@ const TripForm = () => {
             )}
           />
 
-          <Button type="submit" className="max-w-44 mt-7" variant="default" size="lg">
-            <SearchIcon />
+          {/* Date Range Picker */}
+          <div className={cn("grid gap-2 mt-8")}>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  id="date"
+                  variant={"outline"}
+                  className={cn(
+                    "w-[300px] justify-start text-left font-normal",
+                    !selectedDate.from && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2" />
+                  {selectedDate.from ? (
+                    selectedDate.to ? (
+                      <>
+                        {format(selectedDate.from, "LLL dd, y")} -{" "}
+                        {format(selectedDate.to, "LLL dd, y")}
+                      </>
+                    ) : (
+                      format(selectedDate.from, "LLL dd, y")
+                    )
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  initialFocus
+                  mode="range"
+                  selected={selectedDate}
+                  onSelect={handleDateSelect}
+                  numberOfMonths={2}
+                  className="bg-white rounded-md shadow-lg"
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+
+          {/* Submit Button */}
+          <Button
+            type="submit"
+            className="max-w-44 mt-7"
+            variant="default"
+            size="lg"
+          >
+            <SearchIcon className="mr-2" />
             Search
           </Button>
         </form>
