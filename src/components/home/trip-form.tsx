@@ -18,6 +18,7 @@ import { Label } from "../ui/label"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { SearchIcon } from "lucide-react"
+import { redirect } from "next/navigation"
 
 const formSchema = z.object({
   destination: z.string(),
@@ -27,16 +28,21 @@ const formSchema = z.object({
 const TripForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {},
+    defaultValues: {
+      destination: "",
+      duration: 3
+    },
   })
 
-  const onSubmit = () => {}
+  const onSubmit = () => {
+    console.log("Hello")
+    redirect(`/createTrip?destination=${form.getValues("destination")}&duration=${form.getValues("duration")}`)
+  }
 
   return (
     <div className="w-full">
       <Form {...form}>
         <form
-          action=""
           onSubmit={form.handleSubmit(onSubmit)}
           className="max-w-3xl mx-auto flex gap-4"
         >
@@ -58,7 +64,7 @@ const TripForm = () => {
             )}
           />
 
-          <Button className="max-w-44 mt-7" variant="default" size="lg">
+          <Button type="submit" className="max-w-44 mt-7" variant="default" size="lg">
             <SearchIcon />
             Search
           </Button>
