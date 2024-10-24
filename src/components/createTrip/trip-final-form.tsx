@@ -24,6 +24,7 @@ import {
 import TypingAnimation from "../ui/typing-animation"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { TrainIcon, BusIcon, PlaneIcon } from "lucide-react" // Icons for transport
+import { Label } from "@radix-ui/react-label"
 
 // Define validation schema using zod
 const formSchema = z.object({
@@ -149,6 +150,11 @@ const TripFinalForm = () => {
               </FormItem>
             )}
           />
+
+          <div className="flex flex-col gap-4">
+            <FormLabel className="mt-7">Map</FormLabel>
+            <div className="w-full h-96 rounded-2xl bg-gray-200"></div>
+          </div>
 
           {/* Meal Plan Input */}
           <FormField

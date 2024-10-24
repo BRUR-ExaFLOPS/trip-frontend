@@ -33,25 +33,19 @@ const TripForm = () => {
   const onSubmit = () => {}
 
   return (
-    <div className="w-full my-20">
-      <TypingAnimation
-        className="text-6xl font-bold text-black dark:text-white"
-        text="Plan your trip"
-        duration={100}
-      />
-
+    <div className="w-full">
       <Form {...form}>
         <form
           action=""
           onSubmit={form.handleSubmit(onSubmit)}
-          className="max-w-3xl mt-4 mx-auto flex gap-4"
+          className="max-w-3xl mx-auto flex gap-4"
         >
           <FormField
             control={form.control}
             name="destination"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Destination</FormLabel>
+                <FormLabel className="">Destination</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="to where?"
