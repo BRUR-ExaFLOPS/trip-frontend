@@ -21,3 +21,12 @@
     --radius: 0.5rem;
   }
 }
+
+@layer components {
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4;
+  }
+  .heading-secondary {
+    @apply text-2xl;
+  }
+}

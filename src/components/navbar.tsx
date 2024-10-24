@@ -3,6 +3,7 @@
 import React from "react"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
+import Image from "next/image"
 
 const Navbar = () => {
   return (
@@ -35,7 +36,10 @@ const Navbar = () => {
           </div>
         </div>
 
-        <Button variant="default">Sign In</Button>
+        <Button variant="default">
+          <Image src="/google.svg" alt="google icon" height={0} width={18} />{" "}
+          Sign In
+        </Button>
       </nav>
     </header>
   )
