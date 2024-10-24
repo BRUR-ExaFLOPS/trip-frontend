@@ -3,7 +3,6 @@ import Link from "next/link"
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card"
 
 export const Home = () => {
-  // Example trip data
   const trips = [
     {
       id: 1,
@@ -35,7 +34,6 @@ export const Home = () => {
       </p>
 
       <div className="my-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Current Location Weather Card */}
         <Card>
           <CardHeader>
             <CardTitle>Weather in Your Location</CardTitle>
@@ -66,7 +64,7 @@ export const Home = () => {
                 <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                   {trip.overview}
                 </p>
-                {/* Link to the details page */}
+
                 <Link href={`/trip/${trip.id}`}>
                   <p className="mt-4 inline-block text-blue-500 hover:underline">
                     View Details
