@@ -13,7 +13,9 @@ const center = {
   lng: -122.4194,
 }
 
-const MapPage = () => {
+const MapPage = ({ recommendationData }: any) => {
+  console.log("From map page:" + JSON.stringify(recommendationData?.mealPlans))
+
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string, // Use your Google Maps API key here
   })
@@ -25,6 +27,10 @@ const MapPage = () => {
       <h1 className="text-2xl font-bold mb-8">Explore the Map</h1>
       <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10}>
         <Marker position={center} />
+
+        {recommendationData?.mealPlans?.map((item: any, index: number) => (
+          <Marker position={{ lat: item.latitude, lng: item.longitude }} />
+        ))}
       </GoogleMap>
     </div>
   )

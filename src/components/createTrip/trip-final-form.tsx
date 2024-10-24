@@ -23,8 +23,10 @@ import {
 } from "../ui/select"
 import TypingAnimation from "../ui/typing-animation"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
-import { TrainIcon, BusIcon, PlaneIcon, StarIcon } from "lucide-react"
+import { TrainIcon, BusIcon, PlaneIcon } from "lucide-react"
 import MapPage from "./map"
+import { Skeleton } from "../ui/skeleton"
+import AnimatedShinyText from "../ui/animated-shiny-text"
 
 // Define validation schema using zod
 const formSchema = z.object({
@@ -45,7 +47,8 @@ const TripFinalForm = () => {
     },
   })
 
-  const [recommendationData, setRecommendationData] = useState<any>([])
+  const [recommendationData, setRecommendationData] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
 
   async function getData() {
     try {
@@ -53,9 +56,11 @@ const TripFinalForm = () => {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/travel/travel-recommendations?destination=dhaka&duration=3`
       )
       const data = await res.json()
-      console.log(data)
       setRecommendationData(data)
-    } catch (error) {}
+      setLoading(false)
+    } catch (error) {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -63,12 +68,6 @@ const TripFinalForm = () => {
   }, [])
 
   const onSubmit = async (formData: z.infer<typeof formSchema>) => {
-    try {
-      console.log("")
-    } catch (error) {
-      console.log(error)
-    }
-
     console.log("Form data:", formData)
   }
 
@@ -176,80 +175,114 @@ const TripFinalForm = () => {
             )}
           />
 
-          <MapPage />
+          <MapPage recommendationData={recommendationData} />
 
-          {/* Meal Plan Input */}
+          {/* Meal Plan Input with Skeletons */}
           <FormField
             control={form.control}
             name="mealPlan"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Meal Plan</FormLabel>
+                {loading ? (
+                  <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400">
+                    <span>Suggesting...</span>
+                  </AnimatedShinyText>
+                ) : (
+                  ""
+                )}{" "}
                 <div className="flex space-x-4 overflow-x-auto">
-                  {recommendationData?.mealPlans?.map(
-                    (meal: any, index: number) => (
-                      <Card
-                        key={index}
-                        onClick={() => field.onChange(meal.name)} // Updates form field when card is clicked
-                        className={`cursor-pointer min-w-[200px] ${
-                          field.value === meal.name ? "border-blue-500" : ""
-                        }`}
-                      >
-                        <img
-                          src={meal.image}
-                          alt={meal.name}
-                          className="w-full h-32 object-cover rounded-t-xl"
-                        />
-                        <CardContent>
-                          <h4 className="text-lg font-bold">{meal.name}</h4>
-                          <p className="text-sm text-zinc-600">{meal.price}</p>
-                        </CardContent>
-                      </Card>
-                    )
-                  )}
+                  {loading
+                    ? Array(3)
+                        .fill(0)
+                        .map((_, index) => (
+                          <Skeleton
+                            key={index}
+                            className="w-[200px] h-48 rounded-xl"
+                          />
+                        ))
+                    : recommendationData?.mealPlans?.map(
+                        (meal: any, index: number) => (
+                          <Card
+                            key={index}
+                            onClick={() => field.onChange(meal.name)}
+                            className={`cursor-pointer min-w-[200px] ${
+                              field.value === meal.name ? "border-blue-500" : ""
+                            }`}
+                          >
+                            <img
+                              src={meal.image}
+                              alt={meal.name}
+                              className="w-full h-32 object-cover rounded-t-xl"
+                            />
+                            <CardContent>
+                              <h4 className="text-lg font-bold">{meal.name}</h4>
+                              <p className="text-sm text-zinc-600">
+                                {meal.price}
+                              </p>
+                            </CardContent>
+                          </Card>
+                        )
+                      )}
                 </div>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          {/* Accommodation Input */}
+          {/* Accommodation Input with Skeletons */}
           <FormField
             control={form.control}
             name="accommodation"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Accommodation</FormLabel>
+                {loading ? (
+                  <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400">
+                    <span>Suggesting...</span>
+                  </AnimatedShinyText>
+                ) : (
+                  ""
+                )}{" "}
                 <div className="flex space-x-4 overflow-x-auto">
-                  {recommendationData?.accommodations?.map(
-                    (item: any, index: number) => (
-                      <Card
-                        key={index}
-                        onClick={() => field.onChange(item.name)} // Updates form field when card is clicked
-                        className={`cursor-pointer min-w-[200px] ${
-                          field.value === item.name ? "border-blue-500" : ""
-                        }`}
-                      >
-                        <img
-                          src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${item.photos[0]}`}
-                          alt={item.name}
-                          className="w-full h-32 object-cover rounded-t-md"
-                        />
-                        <CardContent className="p-2">
-                          <h4 className="text-md font-bold">{item.name}</h4>
-                          <p className="text-sm text-zinc-600">
-                            {item.address}
-                          </p>
-                          <p className="text-sm text-zinc-600">
-                            rating: {item.rating}
-                          </p>
-                          <p className="text-sm text-zinc-600 mt-2">
-                            {item.price}
-                          </p>
-                        </CardContent>
-                      </Card>
-                    )
-                  )}
+                  {loading
+                    ? Array(3)
+                        .fill(0)
+                        .map((_, index) => (
+                          <Skeleton
+                            key={index}
+                            className="w-[200px] h-60 rounded-xl"
+                          />
+                        ))
+                    : recommendationData?.accommodations?.map(
+                        (item: any, index: number) => (
+                          <Card
+                            key={index}
+                            onClick={() => field.onChange(item.name)}
+                            className={`cursor-pointer min-w-[200px] ${
+                              field.value === item.name ? "border-blue-500" : ""
+                            }`}
+                          >
+                            <img
+                              src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${item.photos[0]}`}
+                              alt={item.name}
+                              className="w-full h-32 object-cover rounded-t-md"
+                            />
+                            <CardContent className="p-2">
+                              <h4 className="text-md font-bold">{item.name}</h4>
+                              <p className="text-sm text-zinc-600">
+                                {item.address}
+                              </p>
+                              <p className="text-sm text-zinc-600">
+                                rating: {item.rating}
+                              </p>
+                              <p className="text-sm text-zinc-600 mt-2">
+                                {item.price}
+                              </p>
+                            </CardContent>
+                          </Card>
+                        )
+                      )}
                 </div>
                 <FormMessage />
               </FormItem>
