@@ -9,6 +9,7 @@ export const Home = () => {
   const [trips, setTrips] = useState([])
   const [searchQuery, setSearchQuery] = useState("")
   const [searchResults, setSearchResults] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
 
   // Fetch trips from the API when the component mounts
   useEffect(() => {
@@ -40,6 +41,7 @@ export const Home = () => {
 
   // Handle image search API
   const handleSearchImages = async () => {
+    setIsLoading(true) // Start loading state
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/travel/search-images?query=${searchQuery}`
@@ -99,8 +101,15 @@ export const Home = () => {
         </div>
       </div>
 
+      {/* Display loading indicator */}
+      {isLoading && (
+        <div className="text-center mt-4 text-lg text-blue-500">
+          Searching images...
+        </div>
+      )}
+
       {/* Display search results */}
-      {searchResults.length > 0 && (
+      {searchResults.length > 0 && !isLoading && (
         <div className="mt-8">
           <h2 className="text-3xl">Search Results</h2>
           <div className="py-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
