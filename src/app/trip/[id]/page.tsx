@@ -45,6 +45,8 @@ const TripDetails = () => {
           accommodationPhotos: data?.accommodation?.photos || [],
           mealPlanPhotos: data?.mealPlan?.photos || [],
           images: data?.images?.map((image: any) => image.filename),
+          lat:data?.accommodation?.geometry?.location?.lat,
+          lng:data?.accommodation?.geometry?.location?.lng
         }
         setTrip(formattedTrip)
       } catch (error) {
@@ -54,6 +56,27 @@ const TripDetails = () => {
 
     fetchTripDetails()
   }, [id])
+
+  const [weather, setWeather] = useState()
+
+  useEffect(() => {
+    const fetchWeatherData = async () => {
+      try {
+        const response = await fetch(
+          `https://api.openweathermap.org/data/2.5/forecast?lat=${Number(trip.lat).toFixed(4)}&lon=${Number(trip?.lng).toFixed(4)}&appid=252f9a5aa41ba1fe2d849073afd910fb`
+        )
+        const data = await response.json()
+
+        console.log({data})
+        
+        setWeather(data)
+      } catch (error) {
+        console.error("Error fetching trips:", error)
+      }
+    }
+
+    fetchWeatherData()
+  }, [trip])
 
   // Handle image selection
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -168,7 +191,7 @@ const TripDetails = () => {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Sunny, 25°C
+            Sunny, {(Number(weather?.list?.[0]?.main?.temp || 273.16) - 273.16).toFixed(2)}°C
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-500">
             Updated just now

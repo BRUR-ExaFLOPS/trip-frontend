@@ -39,6 +39,29 @@ export const Home = () => {
     fetchTrips()
   }, [])
 
+  const [weather, setWeather] = useState<any>()
+
+
+  useEffect(() => {
+    const fetchWeatherData = async () => {
+      try {
+        const response = await fetch(
+          `https://api.openweathermap.org/data/2.5/forecast?lat=23.8091&lon=90.4152&appid=252f9a5aa41ba1fe2d849073afd910fb`
+        )
+        const data = await response.json()
+
+        console.log({data})
+        
+        setWeather(data)
+      } catch (error) {
+        console.error("Error fetching trips:", error)
+      }
+    }
+
+    fetchWeatherData()
+  }, [])
+
+
   // Handle image search API
   const handleSearchImages = async () => {
     setIsLoading(true) // Start loading state
@@ -69,7 +92,7 @@ export const Home = () => {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Sunny, 25°C
+              Sunny, {(Number(weather?.list?.[0]?.main?.temp || 273.16) - 273.16)}°C
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-500">
               Updated just now
