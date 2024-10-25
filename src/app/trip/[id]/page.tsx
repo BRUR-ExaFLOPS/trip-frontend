@@ -108,7 +108,7 @@ const TripDetails = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/travel/upload-trip-images?tripId=${id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/travel/upload-trip-images?tripId=${id}`,
         {
           method: "POST",
           body: formData,
@@ -143,7 +143,7 @@ const TripDetails = () => {
     setIsLoadingBlog(true)
     try {
       const response = await fetch(
-        `http://localhost:3000/travel/generate-blog/${id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/travel/generate-blog/${id}`,
         {
           method: "GET",
         }
