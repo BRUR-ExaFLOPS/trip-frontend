@@ -4,6 +4,7 @@ import React from "react"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import Image from "next/image"
+import Link from "next/link"
 
 const Navbar = () => {
   return (
@@ -17,29 +18,31 @@ const Navbar = () => {
           <div className="hidden md:flex space-x-6">
             <a
               href="#destinations"
-              className="text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white"
+              className="text-base text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white"
             >
               Destinations
             </a>
             <a
               href="#tours"
-              className="text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white"
+              className="text-base text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white"
             >
               Tours
             </a>
             <a
               href="#about"
-              className="text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white"
+              className="text-base text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white"
             >
               About Us
             </a>
           </div>
         </div>
 
-        <Button variant="default">
-          <Image src="/google.svg" alt="google icon" height={0} width={18} />{" "}
-          Sign In
-        </Button>
+        <Link href="/sign-in">
+          <Button variant="default">
+            <Image src="/google.svg" alt="google icon" height={0} width={18} />{" "}
+            Sign In
+          </Button>
+        </Link>
       </nav>
     </header>
   )

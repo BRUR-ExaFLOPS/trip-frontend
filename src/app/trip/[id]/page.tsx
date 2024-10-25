@@ -150,7 +150,7 @@ const TripDetails = () => {
   return (
     <div className="relative w-full py-16 container-custom mx-auto px-4">
       <Button
-        className="absolute -translate-x-[100px] -translate-y-4 underline text-blue-600"
+        className="absolute -translate-x-4 -translate-y-4 underline text-blue-600"
         variant="link"
         onClick={() => {
           window.location.href = "/dashboard"
@@ -162,7 +162,7 @@ const TripDetails = () => {
       <h1 className="text-4xl font-bold mt-12">Trip to {trip?.destination}</h1>
       <p className="text-zinc-600 mt-4">{trip?.overview}</p>
 
-      <Card className="max-w-[300px] mt-4">
+      <Card className="max-w-[300px] mt-4 shadow-lg">
         <CardHeader>
           <CardTitle>Weather of the Destination</CardTitle>
         </CardHeader>
@@ -215,7 +215,7 @@ const TripDetails = () => {
         </div>
       )}
 
-      <div className="flex items-center gap-4 mt-8">
+      <div className="flex items-center gap-4 mt-16">
         <h3 className="text-3xl text-zinc-900">Gallery</h3>
 
         {/* Trigger the Dialog to display the blog */}

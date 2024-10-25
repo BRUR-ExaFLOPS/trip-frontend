@@ -31,9 +31,6 @@ export default function Home() {
             <TripForm />
           </div>
         </div>
-
-        <div className="my-24" />
-        <SuggestedTrips />
       </div>
     </main>
   )

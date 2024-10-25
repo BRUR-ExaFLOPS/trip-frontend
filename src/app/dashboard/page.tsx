@@ -110,7 +110,7 @@ const Dashboard = () => {
         </div>
 
         {/* Left Sidebar for larger screens */}
-        <aside className="hidden lg:block w-64 bg-gray-100 dark:bg-gray-800 p-6">
+        <aside className="hidden lg:block w-64 h-full bg-gray-100 dark:bg-gray-800 p-6">
           <nav className="space-y-4">
             <Link to="/dashboard">
               <Button
