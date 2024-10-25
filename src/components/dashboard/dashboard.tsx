@@ -86,7 +86,7 @@ export const Home = () => {
       </p>
 
       <div className="my-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card>
+        <Card className="shadow-lg">
           <CardHeader>
             <CardTitle>Weather in Your Location</CardTitle>
           </CardHeader>
@@ -101,7 +101,6 @@ export const Home = () => {
         </Card>
       </div>
 
-      {/* Image Search Section */}
       <div className="h-[400px] w-full bg-gray-100 rounded-xl p-6 md:p-12">
         <h1 className="text-4xl text-center">Search your trip images</h1>
         <p className="mt-2 text-zinc-600 text-center">
@@ -124,14 +123,12 @@ export const Home = () => {
         </div>
       </div>
 
-      {/* Display loading indicator */}
       {isLoading && (
         <div className="text-center mt-4 text-lg text-blue-500">
           Searching images...
         </div>
       )}
 
-      {/* Display search results */}
       {searchResults.length > 0 && !isLoading && (
         <div className="mt-8">
           <h2 className="text-3xl">Search Results</h2>
@@ -157,27 +154,32 @@ export const Home = () => {
         </div>
       )}
 
-      {/* Trips Section */}
-      <div className="mt-8">
+      <div className="mt-12">
         <h2 className="text-3xl">Your Trips</h2>
         <div className="py-6 flex flex-col gap-4">
-          {trips.map((trip: any) => (
-            <Card key={trip.id}>
-              <CardHeader>
-                <CardTitle>{trip.destination}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {trip.date}
-                </p>
-                <Link href={`/trip/${trip._id}`}>
-                  <p className="mt-4 inline-block text-blue-500 hover:underline">
-                    View Details
+          {!trips?.length ? (
+            <div className="text-center text-sm text-zinc-600 my-12">
+              No trip found
+            </div>
+          ) : (
+            trips.map((trip: any) => (
+              <Card key={trip.id}>
+                <CardHeader>
+                  <CardTitle>{trip.destination}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {trip.date}
                   </p>
-                </Link>
-              </CardContent>
-            </Card>
-          ))}
+                  <Link href={`/trip/${trip._id}`}>
+                    <p className="mt-4 inline-block text-blue-500 hover:underline">
+                      View Details
+                    </p>
+                  </Link>
+                </CardContent>
+              </Card>
+            ))
+          )}
         </div>
       </div>
     </div>

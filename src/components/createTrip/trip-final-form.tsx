@@ -39,7 +39,6 @@ const formSchema = z.object({
 const TripFinalForm = ({
   destination,
   duration,
-  router,
 }: {
   destination: string
   duration: string
@@ -333,6 +332,15 @@ const TripFinalForm = ({
               </FormItem>
             )}
           />
+          <div>
+            <h3 className="text-lg">Estimated Cost</h3>
+            <div className="space-y-1 mt-2">
+              <p className="text-sm">Total Accommodation Cost: {""}</p>
+              <p className="text-sm">Total Meal Cost: {""}</p>
+            </div>
+            <hr className="w-full max-w-lg border-zinc-500" />
+            <p className="text-sm mt-1">Total Estimated Cost: {""}</p>
+          </div>
 
           {/* Submit Button */}
           <Button type="submit" variant="default" className="w-full">
