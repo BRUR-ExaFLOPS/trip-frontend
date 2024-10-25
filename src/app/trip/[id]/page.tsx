@@ -57,13 +57,13 @@ const TripDetails = () => {
     fetchTripDetails()
   }, [id])
 
-  const [weather, setWeather] = useState()
+  const [weather, setWeather] = useState<any>()
 
   useEffect(() => {
     const fetchWeatherData = async () => {
       try {
         const response = await fetch(
-          `https://api.openweathermap.org/data/2.5/forecast?lat=${Number(trip.lat).toFixed(4)}&lon=${Number(trip?.lng).toFixed(4)}&appid=252f9a5aa41ba1fe2d849073afd910fb`
+          `https://api.openweathermap.org/data/2.5/forecast?lat=${Number(trip?.lat).toFixed(4)}&lon=${Number(trip?.lng).toFixed(4)}&appid=252f9a5aa41ba1fe2d849073afd910fb`
         )
         const data = await response.json()
 
