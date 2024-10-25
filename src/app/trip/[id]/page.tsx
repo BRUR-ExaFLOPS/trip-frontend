@@ -45,8 +45,8 @@ const TripDetails = () => {
           accommodationPhotos: data?.accommodation?.photos || [],
           mealPlanPhotos: data?.mealPlan?.photos || [],
           images: data?.images?.map((image: any) => image.filename),
-          lat:data?.accommodation?.geometry?.location?.lat,
-          lng:data?.accommodation?.geometry?.location?.lng
+          lat: data?.accommodation?.geometry?.location?.lat,
+          lng: data?.accommodation?.geometry?.location?.lng,
         }
         setTrip(formattedTrip)
       } catch (error) {
@@ -63,12 +63,16 @@ const TripDetails = () => {
     const fetchWeatherData = async () => {
       try {
         const response = await fetch(
-          `https://api.openweathermap.org/data/2.5/forecast?lat=${Number(trip?.lat).toFixed(4)}&lon=${Number(trip?.lng).toFixed(4)}&appid=252f9a5aa41ba1fe2d849073afd910fb`
+          `https://api.openweathermap.org/data/2.5/forecast?lat=${Number(
+            trip?.lat
+          ).toFixed(4)}&lon=${Number(trip?.lng).toFixed(
+            4
+          )}&appid=252f9a5aa41ba1fe2d849073afd910fb`
         )
         const data = await response.json()
 
-        console.log({data})
-        
+        console.log({ data })
+
         setWeather(data)
       } catch (error) {
         console.error("Error fetching trips:", error)
@@ -191,7 +195,11 @@ const TripDetails = () => {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Sunny, {(Number(weather?.list?.[0]?.main?.temp || 273.16) - 273.16).toFixed(2)}°C
+            Sunny,{" "}
+            {(
+              Number(weather?.list?.[0]?.main?.temp || 273.16) - 273.16
+            ).toFixed(2)}
+            °C
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-500">
             Updated just now
@@ -200,7 +208,7 @@ const TripDetails = () => {
       </Card>
 
       {/* Image Upload Section */}
-      <Card className="my-8">
+      <Card className="my-8 flex flex-col items-center border-dashed">
         <CardHeader>
           <CardTitle className="text-xl">
             Upload your photos of this trip
@@ -212,11 +220,17 @@ const TripDetails = () => {
             multiple
             accept="image/*"
             onChange={handleImageUpload}
-            className="mb-4 max-w-[400px]"
+            className="mt-1 max-w-[400px]"
           />
-          <Button variant="default" onClick={handleImageSubmit}>
-            <UploadCloudIcon className="mr-2" /> Upload Images
-          </Button>
+          <div className="flex justify-center">
+            <Button
+              variant="default"
+              onClick={handleImageSubmit}
+              className="mx-auto mt-4"
+            >
+              <UploadCloudIcon className="mr-2" /> Upload Images
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
