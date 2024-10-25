@@ -28,7 +28,6 @@ import MapPage from "./map"
 import { Skeleton } from "../ui/skeleton"
 import AnimatedShinyText from "../ui/animated-shiny-text"
 
-
 // Define validation schema using zod
 const formSchema = z.object({
   tripPlan: z.enum(["Budget", "Mid-range", "Luxury"]),
@@ -37,8 +36,14 @@ const formSchema = z.object({
   accommodation: z.string().min(1, { message: "Accommodation is required" }),
 })
 
-const TripFinalForm = ({destination, duration, router} : {destination: string, duration: string}) => {
-
+const TripFinalForm = ({
+  destination,
+  duration,
+  router,
+}: {
+  destination: string
+  duration: string
+}) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -72,28 +77,31 @@ const TripFinalForm = ({destination, duration, router} : {destination: string, d
   const onSubmit = async (formData: z.infer<typeof formSchema>) => {
     console.log("Form data:", formData)
 
-    try{
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/travel/store-trip-plan`, {
-        method: "POST",
-        headers: {
-          "Content-Type" : "application/json"
-        },
-        body: JSON.stringify({
-          username: "test",
-          destination: destination,
-          tripPlan: form.getValues("tripPlan"),
-          mealPlan: form.getValues("mealPlan"),
-          accommodation : form.getValues("accommodation"),
-          transportOption: form.getValues("transport")
-        })
-      })
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/travel/store-trip-plan`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: "test",
+            destination: destination,
+            tripPlan: form.getValues("tripPlan"),
+            mealPlan: form.getValues("mealPlan"),
+            accommodation: form.getValues("accommodation"),
+            transportOption: form.getValues("transport"),
+          }),
+        }
+      )
 
-      if(response.ok) {
+      if (response.ok) {
         window.location.href = "/dashboard"
-      }else {
+      } else {
         throw new Error("Error Creating Plan")
       }
-    }catch(err) {
+    } catch (err) {
       console.log(err)
     }
   }
@@ -101,7 +109,7 @@ const TripFinalForm = ({destination, duration, router} : {destination: string, d
   return (
     <div className="w-full my-16">
       <TypingAnimation
-        className="text-6xl font-bold text-black dark:text-white"
+        className="text-4xl md:text-6xl font-bold text-black dark:text-white"
         text="Finalize your trip"
         duration={100}
       />
@@ -234,7 +242,9 @@ const TripFinalForm = ({destination, duration, router} : {destination: string, d
                             key={index}
                             onClick={() => field.onChange(item.placeId)}
                             className={`cursor-pointer min-w-[200px] ${
-                              field.value === item.placeId ? "border-blue-500" : ""
+                              field.value === item.placeId
+                                ? "border-blue-500"
+                                : ""
                             }`}
                           >
                             <img
@@ -293,7 +303,9 @@ const TripFinalForm = ({destination, duration, router} : {destination: string, d
                             key={index}
                             onClick={() => field.onChange(item.placeId)}
                             className={`cursor-pointer min-w-[200px] ${
-                              field.value === item.placeId ? "border-blue-500" : ""
+                              field.value === item.placeId
+                                ? "border-blue-500"
+                                : ""
                             }`}
                           >
                             <img

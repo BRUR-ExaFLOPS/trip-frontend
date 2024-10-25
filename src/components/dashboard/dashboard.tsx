@@ -1,49 +1,55 @@
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import React, { useEffect, useState } from "react"
+import Link from "next/link"
+import { Card, CardHeader, CardTitle, CardContent } from "../ui/card"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 export const Home = () => {
   // State to hold the fetched trips and search results
-  const [trips, setTrips] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  const [trips, setTrips] = useState([])
+  const [searchQuery, setSearchQuery] = useState("")
+  const [searchResults, setSearchResults] = useState([])
 
   // Fetch trips from the API when the component mounts
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/travel/trip-details?username=test`);
-        const data = await response.json();
-        const formattedTrips = data.map((trip  :any, index : number) => ({
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/travel/trip-details?username=test`
+        )
+        const data = await response.json()
+        const formattedTrips = data.map((trip: any, index: number) => ({
           id: index + 1,
           destination: trip.destination,
           date: "Date not provided", // Replace this with actual date if available
-          overview: `Accommodation: ${trip.accommodation?.name || "N/A"}. Meal Plan: ${trip.mealPlan?.name || "N/A"}`,
+          overview: `Accommodation: ${
+            trip.accommodation?.name || "N/A"
+          }. Meal Plan: ${trip.mealPlan?.name || "N/A"}`,
           accommodationPhotos: trip.accommodation?.photos || [],
           mealPlanPhotos: trip.mealPlan?.photos || [],
-          _id: trip._id
-        }));
-        setTrips(formattedTrips);
+          _id: trip._id,
+        }))
+        setTrips(formattedTrips)
       } catch (error) {
-        console.error("Error fetching trips:", error);
+        console.error("Error fetching trips:", error)
       }
-    };
+    }
 
-    fetchTrips();
-  }, []);
+    fetchTrips()
+  }, [])
 
   // Handle image search API
   const handleSearchImages = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/travel/search-images?query=${searchQuery}`);
-      const data = await response.json();
-      setSearchResults(data); // Update search results state with the fetched data
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/travel/search-images?query=${searchQuery}`
+      )
+      const data = await response.json()
+      setSearchResults(data) // Update search results state with the fetched data
     } catch (error) {
-      console.error("Error fetching image search results:", error);
+      console.error("Error fetching image search results:", error)
     }
-  };
+  }
 
   return (
     <div>
@@ -74,7 +80,8 @@ export const Home = () => {
       <div className="h-[400px] w-full bg-gray-100 rounded-xl p-6 md:p-12">
         <h1 className="text-4xl text-center">Search your trip images</h1>
         <p className="mt-2 text-zinc-600 text-center">
-          This is an AI-powered image search. Please give your prompt to get the required image.
+          This is an AI-powered image search. Please give your prompt to get the
+          required images.
         </p>
 
         {/* Search Form */}
@@ -142,5 +149,5 @@ export const Home = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

@@ -7,7 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { UploadCloudIcon } from "lucide-react"
 import { useParams } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog" // Import ShadCN's Dialog
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog" // Import ShadCN's Dialog
 import { Skeleton } from "@/components/ui/skeleton"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
@@ -26,16 +31,20 @@ const TripDetails = () => {
   useEffect(() => {
     const fetchTripDetails = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/travel/trip/${id}`)
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/travel/trip/${id}`
+        )
         const data = await response.json()
         const formattedTrip = {
           id: id,
           destination: data.destination,
           date: "Date not provided", // Replace with actual date if available
-          overview: `Accommodation: ${data?.accommodation?.name || "N/A"}. Meal Plan: ${data?.mealPlan?.name || "N/A"}`,
+          overview: `Accommodation: ${
+            data?.accommodation?.name || "N/A"
+          }. Meal Plan: ${data?.mealPlan?.name || "N/A"}`,
           accommodationPhotos: data?.accommodation?.photos || [],
           mealPlanPhotos: data?.mealPlan?.photos || [],
-          images: data?.images?.map((image: any) => image.filename)
+          images: data?.images?.map((image: any) => image.filename),
         }
         setTrip(formattedTrip)
       } catch (error) {
@@ -71,10 +80,13 @@ const TripDetails = () => {
     })
 
     try {
-      const response = await fetch(`http://localhost:3000/travel/upload-trip-images?tripId=${id}`, {
-        method: "POST",
-        body: formData,
-      })
+      const response = await fetch(
+        `http://localhost:3000/travel/upload-trip-images?tripId=${id}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      )
 
       if (response.ok) {
         toast({
@@ -103,9 +115,12 @@ const TripDetails = () => {
   const generateBlog = async () => {
     setIsLoadingBlog(true)
     try {
-      const response = await fetch(`http://localhost:3000/travel/generate-blog/${id}`, {
-        method: "GET",
-      })
+      const response = await fetch(
+        `http://localhost:3000/travel/generate-blog/${id}`,
+        {
+          method: "GET",
+        }
+      )
 
       if (response.ok) {
         const blogData = await response.json()
@@ -223,7 +238,9 @@ const TripDetails = () => {
             ) : (
               <div className="prose prose-sm dark:prose-invert max-w-none">
                 {blogContent ? (
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{blogContent?.content}</ReactMarkdown>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {blogContent?.content}
+                  </ReactMarkdown>
                 ) : (
                   "No blog available."
                 )}

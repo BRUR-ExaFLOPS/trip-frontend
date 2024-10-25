@@ -11,7 +11,7 @@ const Navbar = () => {
       <nav className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-8">
           <a href="/" className="text-xl font-bold text-black dark:text-white">
-            MyTravelApp
+            <Image src="/logo.png" alt="logo" height={0} width={150} />
           </a>
 
           <div className="hidden md:flex space-x-6">
