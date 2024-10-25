@@ -55,15 +55,24 @@ const TripForm = () => {
     to: Date | null
   }>({ from: null, to: null })
 
-  // Sync selectedDate with form's dateRange field
-  const handleDateSelect = (range: { from: Date | null; to: Date | null }) => {
-    setSelectedDate(range)
-    form.setValue("dateRange", range) // Update the form value for dateRange
+  const handleDateSelect = (range: {
+    from: Date | undefined
+    to: Date | undefined
+  }) => {
+    setSelectedDate({
+      from: range.from || null,
+      to: range.to || null,
+    })
+
+    form.setValue("dateRange", {
+      from: range.from || null,
+      to: range.to || null,
+    })
   }
 
   const calculateDuration = () => {
     if (selectedDate.from && selectedDate.to) {
-      return differenceInDays(selectedDate.to, selectedDate.from) + 1 // Includes both start and end dates
+      return differenceInDays(selectedDate.to, selectedDate.from) + 1
     }
     return 0
   }
@@ -71,7 +80,6 @@ const TripForm = () => {
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     const duration = calculateDuration()
 
-    // Redirect with destination and duration as query params
     redirect(`/createTrip?destination=${data.destination}&duration=${duration}`)
   }
 
@@ -132,8 +140,8 @@ const TripForm = () => {
                 <Calendar
                   initialFocus
                   mode="range"
-                  selected={selectedDate}
-                  onSelect={handleDateSelect}
+                  selected={selectedDate as any}
+                  onSelect={handleDateSelect as any}
                   numberOfMonths={2}
                   className="bg-white rounded-md shadow-lg"
                 />
